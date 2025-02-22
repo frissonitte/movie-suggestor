@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block main %}
+    <h2>Search Results For: {{search_query}}</h2>
+    <ul>
+        {% for movie in movies %}
+            <li>{{ movie.title }} - {{ movie.genres }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

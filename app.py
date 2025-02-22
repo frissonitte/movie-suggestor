@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, g, render_template, request, redirect, abort
+from flask import Flask, g, render_template, request, redirect, flash
 
 app = Flask(__name__)
 
@@ -13,9 +13,9 @@ def get_db():
     return db
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-   return render_template("index.html")
+    return render_template("index.html")
 
 @app.route("/movies", methods=["GET", "POST"])
 def movies():
@@ -24,10 +24,32 @@ def movies():
     ).fetchall()
     
     if not movies:
-        abort(404, description="No movies found in this genre.")
+        flash("No movies found", "danger") 
     
     return render_template("movies.html",movies=movies)
 
+@app.route("/search", methods=["POST"])
+def search():
+    search_query = request.form.get("search_query")
+    if search_query:
+        db = get_db()
+        movies = db.execute(
+            """
+            SELECT title, genres 
+            FROM movies 
+            JOIN tags ON movies.movieId = tags.movieId  
+            WHERE title LIKE ? OR genres LIKE ? OR tag LIKE ?
+            """,
+            (f"%{search_query}%", f"%{search_query}%", f"%{search_query}%")
+        ).fetchall()
+
+        if not movies:
+            flash("No movies found", "danger") 
+
+        return render_template("search_results.html", movies=movies, search_query=search_query)
+    
+    flash("Enter a search term.", "danger") 
+          
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, "_database", None)

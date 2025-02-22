@@ -29,12 +29,12 @@
                                 <a class="nav-link {% if request.endpoint == 'movies' %}active{% endif %}" href="/movies">Movies</a>
                             </li> 
                         </ul>
-                        <div class="d-flex justify-content-center w-100">
+                        <form action="{{ url_for('search') }}" method="POST" class="d-flex justify-content-center w-100">
                             <div class="d-flex justify-content-center align-items-center w-50">
-                              <input type="text" class="form-control" placeholder="Search" id="navbar-search">
-                              <button class="btn btn-outline-success ms-2" type="button">Search</button>
+                                <input type="text" class="form-control" placeholder="Search" id="navbar-search" name="search_query">
+                                <button class="btn btn-outline-success ms-2" type="submit">Search</button>
                             </div>
-                          </div>
+                        </form>
                 </div>
             </div>
         </nav>
