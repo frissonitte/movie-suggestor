@@ -1,7 +1,15 @@
 import sqlite3
-from flask import Flask, g, render_template, request, redirect, flash
+from flask import Flask, g, render_template, request, redirect, flash, session
+from flask_session import Session
+from auth import auth, login_required
 
 app = Flask(__name__)
+
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
+app.register_blueprint(auth)
 
 DATABASE = "movie.db"
 
@@ -12,21 +20,14 @@ def get_db():
         db.row_factory = sqlite3.Row
     return db
 
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 
-@app.route("/movies", methods=["GET", "POST"])
-def movies():
-    movies = get_db().execute(
-        "SELECT title, genres FROM movies WHERE genres LIKE '%Comedy%'"
-    ).fetchall()
-    
-    if not movies:
-        flash("No movies found", "danger") 
-    
-    return render_template("movies.html",movies=movies)
+@app.route("/watchlist", methods=["GET", "POST"])
+@login_required
+def watchlist():
+    return render_template("watchlist.html")
 
 @app.route("/search", methods=["POST"])
 def search():
@@ -49,6 +50,7 @@ def search():
         return render_template("search_results.html", movies=movies, search_query=search_query)
     
     flash("Enter a search term.", "danger") 
+    return redirect("/")
           
 @app.teardown_appcontext
 def close_connection(exception):

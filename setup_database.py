@@ -15,7 +15,7 @@ cursor = conn.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS movies (
         movieId INTEGER PRIMARY KEY,
-        movie_title TEXT NOT NULL,
+        movie_title TEXT NOT NULL,python
         genres TEXT NOT NULL
     )
 ''')
@@ -47,6 +47,14 @@ cursor.execute('''
         timestamp INTEGER,
         FOREIGN KEY (movieId) REFERENCES movies (movieId)
         FOREIGN KEY (userId) REFERENCES movies (userId)
+    )
+''')
+
+cursor.execute('''
+    CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        hash TEXT NOT NULL
     )
 ''')
 

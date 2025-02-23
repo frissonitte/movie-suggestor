@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 
 {% block title %}
-   Movies
+   Watchlist
 {% endblock %}
 
 {% block main %}
 <table class="table table-striped">
-    {% if movies %}
+    {% if watchlist %}
     <thead>
     <tr>
         <th>Title</th>
@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-        {% for movie in movies %}
+        {% for movie in watchlist %}
     <tr>
             <td>{{movie.title}}</td>
             <td>{{movie.genres}}</td>
