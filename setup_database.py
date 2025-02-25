@@ -15,7 +15,7 @@ cursor = conn.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS movies (
         movieId INTEGER PRIMARY KEY,
-        movie_title TEXT NOT NULL,python
+        movie_title TEXT NOT NULL,
         genres TEXT NOT NULL
     )
 ''')
@@ -46,7 +46,7 @@ cursor.execute('''
         tag TEXT NOT NULL,
         timestamp INTEGER,
         FOREIGN KEY (movieId) REFERENCES movies (movieId)
-        FOREIGN KEY (userId) REFERENCES movies (userId)
+        FOREIGN KEY (userId) REFERENCES users (id)
     )
 ''')
 
@@ -58,14 +58,47 @@ cursor.execute('''
     )
 ''')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS watchlist (
+        movieId INTEGER,
+        userId INTEGER,
+        FOREIGN KEY (movieId) REFERENCES movies (movieId),
+        FOREIGN KEY (userId) REFERENCES users (id),
+        PRIMARY KEY (movieId, userId)
+    )
+''')
 
-#Data insertation
+cursor.execute('''
+    CREATE TABLE user_mapping (
+        movielens_userId INTEGER PRIMARY KEY,
+        system_userId INTEGER UNIQUE,
+        FOREIGN KEY (system_userId) REFERENCES users(id)
+    )
+''')
+
+#Data insertion
 movies.to_sql('movies',conn, if_exists='replace', index=False)
 ratings.to_sql('ratings',conn, if_exists='replace', index=False)
 links.to_sql('links', conn, if_exists='replace', index=False)
 tags.to_sql('tags', conn, if_exists='replace', index=False)
 
-conn.commit()
-conn.close()
+def load_movielens_users():
+    conn = sqlite3.connect("movie.db")
+    db = conn.cursor()
 
-print("Database created and populated successfully!")
+    db.execute("SELECT DISTINCT userId FROM ratings")
+    movielens_users = db.fetchall()
+
+    for user in movielens_users:
+        user_id = user[0]
+        
+        db.execute("INSERT OR IGNORE INTO users (id, username, hash) VALUES (?, ?, ?)",
+                   (user_id, f"anonymous_{user_id}", ""))
+        
+        db.execute("INSERT OR IGNORE INTO user_mapping (movielens_userId, system_userId) VALUES (?, ?)",
+                   (user_id, user_id))
+    
+    conn.commit()
+    conn.close()
+
+load_movielens_users()
