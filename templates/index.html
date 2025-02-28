@@ -3,8 +3,29 @@
 {% block title %}Home{% endblock %}
 
 {% block main %}
-    <div class="container py-5 text-center">
-        <h1>Welcome to Movie Suggestor</h1>
+<h1>Popular Movies</h1>
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        {% for movie in movies %}
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ loop.index0 }}" class="{% if loop.first %}active{% endif %}" aria-label="Slide {{ loop.index }}"></button>
+        {% endfor %}
     </div>
-
+    <div class="carousel-inner">
+        {% for movie in movies %}
+            <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <a href="{{ url_for('movie_details', movie_id=movie['id']) }}" target="_blank">
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie['poster_path'] }}" class="d-block" alt="{{ movie['title'] }}">
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
 {% endblock %}

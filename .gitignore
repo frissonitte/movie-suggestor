@@ -1,17 +1,9 @@
-# Python Bytecode
 __pycache__/
 *.py[cod]
-
-# Virtual Environment
 venv/
-env/
-
-# IDE/Editor
 .vscode/
 .idea/
-
-# Windows
 Thumbs.db
-
-# CSV
 *.csv
+.env
+alternatives/

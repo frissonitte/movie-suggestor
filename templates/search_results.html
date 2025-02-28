@@ -3,10 +3,23 @@
 {% block title %}Search Results{% endblock %}
 
 {% block main %}
-    <h2>Search Results For: {{search_query}}</h2>
-    <ul>
+    <h2>Search Results For: {{ search_query }}</h2>
+    
+    <div class="movie-grid">
         {% for movie in movies %}
-            <li>{{ movie.title }} - {{ movie.genres }}</li>
+            {% if movie %}
+                <div class="movie-item">
+                    <a href="{{ url_for('movie_details', movie_id=movie['id']) }}" target="_blank">
+                        <img src="https://image.tmdb.org/t/p/w500{{ movie['poster_path'] }}" class="movie-poster" alt="{{ movie['title'] }}">
+                    </a>
+                    <div class="movie-info">
+                        <h3>{{ movie['title'] }}</h3>
+                        <p>{{ movie.get('release_date', 'No release date') }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <p>Movie data unavailable</p>
+            {% endif %}
         {% endfor %}
-    </ul>
+    </div>
 {% endblock %}
